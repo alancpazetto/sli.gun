@@ -3,6 +3,7 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import { FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
+import { useAuthContextConsumer } from "../../providers/AuthProvider";
 
 type LoginForm = {
   username: string;
@@ -10,7 +11,12 @@ type LoginForm = {
 };
 
 const Login = () => {
-  const handleOnSubmit = (values: LoginForm) => {};
+  const { setIsLogged } = useAuthContextConsumer();
+
+  const handleOnSubmit = (values: LoginForm) => {
+    setIsLogged(true);
+  };
+
   const handleSignUpClick = () => {};
 
   return (
@@ -57,7 +63,7 @@ const Login = () => {
           </Link>
           <Button
             type="submit"
-            colorScheme="green"
+            colorScheme="teal"
             mr="16px"
             rightIcon={<FaChevronRight />}
           >

@@ -1,21 +1,26 @@
+import { BrowserRouter } from "react-router-dom";
 import "./App.css";
-import { Switch, Route, BrowserRouter, Redirect } from "react-router-dom";
-import { ROUTES } from "./constants/routes";
-import SignUp from "./pages/SignUp";
 import Authenticated from "./pages/Authenticated";
 import Unauthenticated from "./pages/Unauthenticated";
+import AuthProvider, { useAuthContextConsumer } from "./providers/AuthProvider";
+
+const AppWrapped = () => {
+  const { isLogged } = useAuthContextConsumer();
+
+  if (isLogged) {
+    return <Authenticated />;
+  }
+
+  return <Unauthenticated />;
+};
 
 function App() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path={ROUTES.BASE} component={Unauthenticated} />
-        <Route path={ROUTES.SIGN_IN} component={SignUp} />
-        <Route path={ROUTES.LOGGED} component={Authenticated} />
-
-        <Redirect to={ROUTES.LOGIN} />
-      </Switch>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppWrapped />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

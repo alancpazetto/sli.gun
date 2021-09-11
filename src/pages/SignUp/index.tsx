@@ -57,7 +57,7 @@ const SignUp = () => {
           </Link>
           <Button
             type="submit"
-            colorScheme="green"
+            colorScheme="teal"
             mr="16px"
             rightIcon={<FaChevronRight />}
           >
