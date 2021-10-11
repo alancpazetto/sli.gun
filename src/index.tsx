@@ -1,8 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import "gun/gun";
+import "gun/sea";
+import "gun/axe";
 import "./index.css";
+
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
+import Gun from "gun";
+import React from "react";
+import ReactDOM from "react-dom";
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,9 +1,21 @@
-import { Box, Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+} from "@chakra-ui/react";
 import { Field, FieldProps, Form, Formik } from "formik";
+
+import { Auth } from "../../models/Auth";
 import { FaChevronRight } from "react-icons/fa";
+import Gun from "gun/gun";
+import { IGunCryptoKeyPair } from "gun/types/types";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
 import { useAuthContextConsumer } from "../../providers/AuthProvider";
+import { useState } from "react";
 
 type LoginForm = {
   username: string;
@@ -11,13 +23,33 @@ type LoginForm = {
 };
 
 const Login = () => {
-  const { setIsLogged } = useAuthContextConsumer();
+  const { setAuthPub } = useAuthContextConsumer();
+  const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
-  const handleOnSubmit = (values: LoginForm) => {
-    setIsLogged(true);
+  const handleOnSubmit = async (values: LoginForm) => {
+    setIsLoading(true);
+
+    try {
+      const authPub = await Auth.getInstance().login({
+        alias: values.username,
+        pass: values.password,
+      });
+
+      setAuthPub(authPub);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(e);
+        toast({
+          title: "Ops",
+          description: e.message,
+          status: "error",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const handleSignUpClick = () => {};
 
   return (
     <Formik<LoginForm>
@@ -40,7 +72,7 @@ const Login = () => {
           {({ field }: FieldProps<string>) => (
             <FormControl id="password" mb="24px">
               <FormLabel>Username</FormLabel>
-              <Input type="text" {...field} />
+              <Input type="password" autoComplete="" {...field} />
             </FormControl>
           )}
         </Field>
@@ -51,13 +83,7 @@ const Login = () => {
           alignItems="center"
         >
           <Link to={ROUTES.SIGN_IN}>
-            <Button
-              size="xs"
-              onClick={handleSignUpClick}
-              colorScheme="gray"
-              variant="ghost"
-              type="button"
-            >
+            <Button size="xs" colorScheme="gray" variant="ghost" type="button">
               Sign up
             </Button>
           </Link>
@@ -66,6 +92,7 @@ const Login = () => {
             colorScheme="teal"
             mr="16px"
             rightIcon={<FaChevronRight />}
+            isLoading={isLoading}
           >
             Login
           </Button>

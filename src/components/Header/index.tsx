@@ -1,12 +1,20 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
-import { useAuthContextConsumer } from "../../providers/AuthProvider";
-import Logo from "../Logo";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Suspense, useMemo } from "react";
 
-const Header = () => {
-  const { setIsLogged } = useAuthContextConsumer();
+import Logo from "../Logo";
+import { User } from "../../models/User";
+import { useAtom } from "jotai";
+import { useAuthContextConsumer } from "../../providers/AuthProvider";
+import { userName } from "../../models/Database";
+
+const WrapperHeader = () => {
+  const { logout } = useAuthContextConsumer();
+  // const [username] = useAtom(userAtom);
+  // const username = useMemo(() => User.username, []);
+  // const [username] = useAtom(userAtom);
 
   const handleLogoutClick = () => {
-    setIsLogged(false);
+    logout();
   };
 
   return (
@@ -20,6 +28,7 @@ const Header = () => {
     >
       <Logo />
       <Box>
+        <Text>Hi! {userName}.</Text>
         <Button size="sm" variant="ghost" onClick={handleLogoutClick}>
           Logout
         </Button>
@@ -27,5 +36,11 @@ const Header = () => {
     </Flex>
   );
 };
+
+const Header = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <WrapperHeader />
+  </Suspense>
+);
 
 export default Header;
